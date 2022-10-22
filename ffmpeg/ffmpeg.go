@@ -8,6 +8,20 @@ import (
 	"strings"
 )
 
+func IsLocallyInstalled() bool {
+	cmd := exec.Command("ffmpeg", "-version")
+
+	var stdout, stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	cmd.Stdout = &stdout
+
+	if err := cmd.Run(); err != nil {
+		return false
+	}
+
+	return true
+}
+
 func ExtractAudio(videoFilePath, audioFilePath string) error {
 
 	fmt.Printf("Extracting audio out of %v...\n", videoFilePath)
