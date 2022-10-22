@@ -156,4 +156,9 @@ func main() {
 	}
 
 	wg.Wait()
+
+	close(uploadAudioFileChannel)
+	close(startTranscriptFileChannel)
+	close(saveTranscriptFileChannel)
+	close(mergeTranscriptFileChannel)
 }
