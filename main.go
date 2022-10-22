@@ -11,14 +11,12 @@ import (
 
 	"github.com/RushabhaJain/VideoProcessing/assemblyai"
 	"github.com/RushabhaJain/VideoProcessing/ffmpeg"
-	"github.com/cassava/lackey/audio/mp3"
 	"github.com/joho/godotenv"
 )
 
 type fileToProcess struct {
 	videoFilePath          string
 	audioFilePath          string
-	outputFilePath         string
 	transcriptFilePath     string
 	uploadedAudioUrl       string
 	transcriptionProcessId string
@@ -46,13 +44,20 @@ func main() {
 	fmt.Println("Let's add subtitles to your videos")
 	fmt.Println("==================================")
 
-	// Take the source of videos
-	fmt.Printf("Please add the path of folder where all videos exist: ")
-	var videoFileContainer string
-	fmt.Scan(&videoFileContainer)
-
 	filesToProcess := make([]fileToProcess, 0, 10)
-	//TODO:: Validate videoFileContainer is valid path and is directory
+
+	var videoFileContainer string
+	for {
+		// Take the source of videos
+		fmt.Printf("Please add the path of folder where all videos exist: ")
+		fmt.Scan(&videoFileContainer)
+
+		if isExist := isFileExists(videoFileContainer); isExist {
+			break
+		}
+		fmt.Printf("Oops! %v does not exist!\n", videoFileContainer)
+	}
+
 	filepath.WalkDir(videoFileContainer, func(path string, d fs.DirEntry, err error) error {
 		if !d.IsDir() && filepath.Ext(path) == ".mp4" {
 			filesToProcess = append(filesToProcess, fileToProcess{
@@ -151,16 +156,4 @@ func main() {
 	}
 
 	wg.Wait()
-}
-
-func getMP3FileDuration(filePath string) (time.Duration, error) {
-	fileMetadata, err := mp3.ReadMetadata(filePath)
-
-	if err != nil {
-		fmt.Printf("Error while getting duration of mp3 file %v\n", filePath)
-		fmt.Println(err)
-		return 0, err
-	}
-
-	return fileMetadata.Length(), nil
 }
