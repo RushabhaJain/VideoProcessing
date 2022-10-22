@@ -36,6 +36,10 @@ func main() {
 		panic("Missing API_KEY in .env file")
 	}
 
+	if installed := ffmpeg.IsLocallyInstalled(); !installed {
+		panic("Please install ffmpeg tool on your local machine")
+	}
+
 	API_KEY := os.Getenv("API_KEY")
 
 	fmt.Println("==================================")
